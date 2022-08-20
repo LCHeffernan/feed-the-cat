@@ -3,7 +3,6 @@ const { Cat } = require("../models");
 exports.createCat = async (req, res) => {
   try {
     const createCatInDb = await Cat.create(req.body);
-    //accessing Cat model and inserting an row entry
     res.status(201).json(createCatInDb);
   } catch (err) {
     res.status(500).json({ error: "Cat not created" });
@@ -11,18 +10,14 @@ exports.createCat = async (req, res) => {
 };
 
 exports.findAllCats = async (req, res) => {
-    const { queryString } = req.query;
+  const queryString = req.query;
   try {
-    if (!queryDb) {
-    const findCatsInDb = await Cat.findAll();
-    console.log('all cats ' + queryString);
-    res.status(200).json(findCatsInDb);
+    if (Object.keys(queryString).length === 0) {
+      const findCatsInDb = await Cat.findAll();
+      res.status(200).json(findCatsInDb);
     } else {
-        //not working
-        console.log('hello')
-        const findCatInDb = await Cat.findAll({ where: queryDb});
-        console.log(findCatInDb)
-        res.status(200).json(findCatInDb);
+      const findCatInDb = await Cat.findAll({ where: queryString });
+      res.status(200).json(findCatInDb);
     }
   } catch (err) {
     res.status(500);
@@ -61,11 +56,10 @@ exports.updateAnyOfCatsDetails = async (req, res) => {
   }
 };
 
-//not working!
 exports.updateCatFeedDate = async (req, res) => {
   const { catId } = req.params;
   const findCatInDb = await Cat.findByPk(catId);
-  
+
   try {
     if (!findCatInDb) {
       res.sendStatus(404);
